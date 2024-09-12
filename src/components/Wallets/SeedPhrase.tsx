@@ -8,13 +8,15 @@ import {
   CardTitle
 } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { useWalletStore } from '@/store/walletStore';
 import { generateMnemonic } from 'bip39';
 import { ArrowLeft } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { toast } from 'sonner';
 
 export default function SeedPhrase({ handleStep }: { handleStep: (step: number) => void }) {
-  const [mnemonics, setMnemonics] = useState<string[]>([]);
+  const mnemonic = useWalletStore((state) => state.mnemonic);
+  const setMnemonics = useWalletStore((state) => state.setMnemonics);
   const handleContinue = () => {
     handleStep(2);
   };
@@ -25,14 +27,12 @@ export default function SeedPhrase({ handleStep }: { handleStep: (step: number) 
 
   const generateMnemonics = () => {
     let mnemonicsString = generateMnemonic();
-
-    const mnemonicsArray = mnemonicsString.split(' ');
-    setMnemonics(mnemonicsArray);
+    setMnemonics(mnemonicsString);
   };
 
-  const copyText = (text: string[]) => {
+  const copyText = (text: string) => {
     try {
-      navigator.clipboard.writeText(text.join(' '));
+      navigator.clipboard.writeText(text);
       toast('Copied Secret Recovery phrase to clipboard!');
     } catch (error) {
       toast('Uh oh! Something went wrong.');
@@ -62,10 +62,10 @@ export default function SeedPhrase({ handleStep }: { handleStep: (step: number) 
       </CardHeader>
       <CardContent
         className='px-3 py-4 w-full mb-4 text-center hover:bg-slate-50 rounded-sm'
-        onClick={() => copyText(mnemonics)}
+        onClick={() => copyText(mnemonic)}
       >
         <div className='grid grid-cols-3 gap-6 text-center mb-4'>
-          {mnemonics.map((val) => {
+          {mnemonic.split(' ').map((val) => {
             return <span className='p-2 border rounded-lg'>{val}</span>;
           })}
         </div>
