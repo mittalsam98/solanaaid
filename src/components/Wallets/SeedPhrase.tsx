@@ -1,12 +1,6 @@
+// SeedPhrase.tsx
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useWalletStore } from '@/store/walletStore';
 import { generateMnemonic } from 'bip39';
@@ -17,9 +11,6 @@ import { toast } from 'sonner';
 export default function SeedPhrase({ handleStep }: { handleStep: (step: number) => void }) {
   const mnemonic = useWalletStore((state) => state.mnemonic);
   const setMnemonics = useWalletStore((state) => state.setMnemonics);
-  const handleContinue = () => {
-    handleStep(2);
-  };
 
   useEffect(() => {
     generateMnemonics();
@@ -30,13 +21,8 @@ export default function SeedPhrase({ handleStep }: { handleStep: (step: number) 
     setMnemonics(mnemonicsString);
   };
 
-  const copyText = (text: string) => {
-    try {
-      navigator.clipboard.writeText(text);
-      toast('Copied Secret Recovery phrase to clipboard!');
-    } catch (error) {
-      toast('Uh oh! Something went wrong.');
-    }
+  const handleContinue = () => {
+    handleStep(2);
   };
 
   return (
@@ -60,22 +46,46 @@ export default function SeedPhrase({ handleStep }: { handleStep: (step: number) 
           with anyone!
         </CardDescription>
       </CardHeader>
-      <CardContent
-        className='px-3 py-4 w-full mb-4 text-center hover:bg-slate-50 rounded-sm'
-        onClick={() => copyText(mnemonic)}
-      >
-        <div className='grid grid-cols-3 gap-6 text-center mb-4'>
-          {mnemonic.split(' ').map((val) => {
-            return <span className='p-2 border rounded-lg'>{val}</span>;
-          })}
-        </div>
-        <div className='w-2/4 border-t m-auto'>Click anywhere to copy</div>
-      </CardContent>
+
+      <SeedPhraseDisplay mnemonic={mnemonic} />
+
       <CardFooter className='p-0 flex flex-col gap-5 w-3/6'>
         <Button className='w-full' onClick={handleContinue}>
           Continue
         </Button>
       </CardFooter>
     </Card>
+  );
+}
+
+export function SeedPhraseDisplay({
+  mnemonic,
+  className
+}: {
+  mnemonic: string;
+  className?: string;
+}) {
+  const copyText = () => {
+    try {
+      navigator.clipboard.writeText(mnemonic);
+      toast('Copied Secret Recovery phrase to clipboard!');
+    } catch (error) {
+      toast('Uh oh! Something went wrong.');
+    }
+  };
+  return (
+    <div
+      className={`px-3 py-4 w-full mb-4 text-center hover:bg-slate-50 rounded-sm`}
+      onClick={copyText}
+    >
+      <div className={`grid grid-cols-3 gap-6 text-center mb-4 ${className ? className : ''}`}>
+        {mnemonic.split(' ').map((val, index) => (
+          <span key={index} className='p-2 border rounded-lg'>
+            {val}
+          </span>
+        ))}
+      </div>
+      <div className='w-2/4 border-t pt-1 m-auto'>Click anywhere to copy</div>
+    </div>
   );
 }
