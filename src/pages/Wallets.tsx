@@ -1,5 +1,5 @@
 import ImportSeedPhrase from '@/components/Wallets/ImportSeedPhrase';
-import SeedPhrase from '@/components/Wallets/SeedPhrase';
+import GenerateSeedPhrase from '@/components/Wallets/GenerateSeedPhrase';
 import WalletActionCTAs from '@/components/Wallets/WalletActionCTAs';
 import WalletsList from '@/components/Wallets/WalletsList';
 import { useState } from 'react';
@@ -17,7 +17,7 @@ export default function Wallets() {
         <div className='h-full w-full flex justify-center items-center p-2'>
           <div className='xl:w-2/5'>
             {currentStep === 0 && <WalletActionCTAs handleStep={handleStep} />}
-            {currentStep === 1 && <SeedPhrase handleStep={handleStep} />}
+            {currentStep === 1 && <GenerateSeedPhrase handleStep={handleStep} />}
             {currentStep === 3 && <ImportSeedPhrase handleStep={handleStep} />}
           </div>
         </div>

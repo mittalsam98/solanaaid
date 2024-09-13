@@ -1,4 +1,3 @@
-// SeedPhrase.tsx
 import { Button } from '@/components/ui/button';
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -8,7 +7,7 @@ import { ArrowLeft } from 'lucide-react';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
 
-export default function SeedPhrase({ handleStep }: { handleStep: (step: number) => void }) {
+export default function GenerateSeedPhrase({ handleStep }: { handleStep: (step: number) => void }) {
   const mnemonic = useWalletStore((state) => state.mnemonic);
   const setMnemonics = useWalletStore((state) => state.setMnemonics);
 

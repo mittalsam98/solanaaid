@@ -19,7 +19,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { LAYOUT, useWalletStore } from '@/store/walletStore';
 import { ChevronRight, List, PanelLeft, Settings } from 'lucide-react';
 import { CustomAlertDialog } from '../CustomAlertDialog';
-import { SeedPhraseDisplay } from './SeedPhrase';
+import { SeedPhraseDisplay } from './GenerateSeedPhrase';
 
 export function WalletSettingPopover({ handleStep }: { handleStep: (step: number) => void }) {
   const setActiveWalletIndex = useWalletStore((state) => state.setActiveWalletIndex);
