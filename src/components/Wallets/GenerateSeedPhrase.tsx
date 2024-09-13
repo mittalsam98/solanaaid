@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { createSolanaWalletFromMnemonic } from '@/lib/utilities';
 import { useWalletStore } from '@/store/walletStore';
 import { generateMnemonic } from 'bip39';
 import { ArrowLeft } from 'lucide-react';
@@ -10,6 +11,15 @@ import { toast } from 'sonner';
 export default function GenerateSeedPhrase({ handleStep }: { handleStep: (step: number) => void }) {
   const mnemonic = useWalletStore((state) => state.mnemonic);
   const setMnemonics = useWalletStore((state) => state.setMnemonics);
+  const walletData = useWalletStore((state) => state.walletData);
+  const setWalletData = useWalletStore((state) => state.setWalletData);
+
+  const createNewWallet = () => {
+    const newWalletData = createSolanaWalletFromMnemonic();
+    const tempWalletData = [...walletData];
+    tempWalletData.push(newWalletData);
+    setWalletData(tempWalletData);
+  };
 
   useEffect(() => {
     generateMnemonics();
@@ -21,6 +31,7 @@ export default function GenerateSeedPhrase({ handleStep }: { handleStep: (step: 
   };
 
   const handleContinue = () => {
+    createNewWallet();
     handleStep(2);
   };
 

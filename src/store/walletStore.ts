@@ -1,3 +1,4 @@
+import secureLocalStorage from 'react-secure-storage';
 import { create } from 'zustand';
 
 export enum LAYOUT {
@@ -20,14 +21,24 @@ interface WalletState {
   privateKey: string;
   privateKeyVisible: boolean;
 }
+const getLocalStorageData = () => {
+  const storageData = (secureLocalStorage.getItem('walletData') as string) ?? '';
+  const parsedStorageData = JSON.parse(storageData);
+  if (parsedStorageData) {
+    return parsedStorageData;
+  } else return [];
+};
 
 export const useWalletStore = create<WalletsState>()((set) => ({
   mnemonic: '',
   activeWalletIndex: 0,
-  walletData: [],
+  walletData: getLocalStorageData(),
   layout: LAYOUT.LEFT_PANEL,
   setMnemonics: (mnemonic) => set({ mnemonic }),
-  setWalletData: (data) => set({ walletData: data }),
+  setWalletData: (data) => {
+    secureLocalStorage.setItem('walletData', JSON.stringify(data));
+    return set({ walletData: data });
+  },
   setLayout: (layout: LAYOUT) => set({ layout: layout }),
   setActiveWalletIndex: (val: number) => set(() => ({ activeWalletIndex: val }))
 }));

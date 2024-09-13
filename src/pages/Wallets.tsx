@@ -1,11 +1,19 @@
-import ImportSeedPhrase from '@/components/Wallets/ImportSeedPhrase';
 import GenerateSeedPhrase from '@/components/Wallets/GenerateSeedPhrase';
+import ImportSeedPhrase from '@/components/Wallets/ImportSeedPhrase';
 import WalletActionCTAs from '@/components/Wallets/WalletActionCTAs';
 import WalletsList from '@/components/Wallets/WalletsList';
-import { useState } from 'react';
+import { useWalletStore } from '@/store/walletStore';
+import { useEffect, useState } from 'react';
 
 export default function Wallets() {
   const [currentStep, setCurrentStep] = useState(0);
+  const walletData = useWalletStore((state) => state.walletData);
+
+  useEffect(() => {
+    if (walletData.length) {
+      setCurrentStep(2);
+    }
+  }, []);
 
   const handleStep = (step: number) => {
     setCurrentStep(step);

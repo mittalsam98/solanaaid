@@ -4,7 +4,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { createSolanaWalletFromMnemonic } from '@/lib/utilities';
 import { LAYOUT, useWalletStore } from '@/store/walletStore';
 import { Eye, EyeOff, Trash } from 'lucide-react';
-import { useEffect } from 'react';
 import { CustomAlertDialog } from '../CustomAlertDialog';
 import { WalletSettingPopover } from './WalletSettingPopover';
 
@@ -13,11 +12,6 @@ export default function WalletsList({ handleStep }: { handleStep: (step: number)
   const setWalletData = useWalletStore((state) => state.setWalletData);
   const layout = useWalletStore((state) => state.layout);
   const activeWalletIndex = useWalletStore((state) => state.activeWalletIndex);
-
-  useEffect(() => {
-    const walletData = createSolanaWalletFromMnemonic();
-    setWalletData([walletData]);
-  }, []);
 
   const addWalletHandler = () => {
     const newWalletData = createSolanaWalletFromMnemonic();
