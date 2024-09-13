@@ -1,9 +1,7 @@
-import { BadgePlus, PanelLeft, PanelRight } from 'lucide-react';
-
+import { PanelLeft, PanelRight } from 'lucide-react';
 import { SIDE_NAV_ITEMS } from '@/lib/constants';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -12,6 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
+
 export default function Sidebar() {
   const [isSidebarExpanded, setSidebarExpanded] = useState(false);
 
@@ -39,9 +38,10 @@ export default function Sidebar() {
         </div>
         <div className='flex flex-col gap-4 items-start'>
           {SIDE_NAV_ITEMS.map((val) => {
+            const IconComponent = val.icon;
             return (
               <Link key={val.path} to={val.path} className='flex items-center gap-3  text-lg '>
-                <BadgePlus className='h-5 w-5' />
+                <IconComponent className='h-5 w-5' />
                 {isSidebarExpanded && <span className='transition-all'>{val.value}</span>}
               </Link>
             );

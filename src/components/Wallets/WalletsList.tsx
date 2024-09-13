@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { createSolanaWalletFromMnemonic } from '@/lib/utilities';
 import { LAYOUT, useWalletStore } from '@/store/walletStore';
 import { Eye, EyeOff, Trash } from 'lucide-react';
-import { CustomAlertDialog } from '../CustomAlertDialog';
+import { CustomAlertDialog } from '../CommonComponents/CustomAlertDialog';
 import { WalletSettingPopover } from './WalletSettingPopover';
 
 export default function WalletsList({ handleStep }: { handleStep: (step: number) => void }) {

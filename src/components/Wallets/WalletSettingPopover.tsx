@@ -18,7 +18,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { LAYOUT, useWalletStore } from '@/store/walletStore';
 import { ChevronRight, List, PanelLeft, Settings } from 'lucide-react';
-import { CustomAlertDialog } from '../CustomAlertDialog';
+import { CustomAlertDialog } from '../CommonComponents/CustomAlertDialog';
 import { SeedPhraseDisplay } from './GenerateSeedPhrase';
 
 export function WalletSettingPopover({ handleStep }: { handleStep: (step: number) => void }) {

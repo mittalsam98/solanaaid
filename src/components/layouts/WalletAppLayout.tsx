@@ -1,5 +1,5 @@
 import Header from '@/components/Header/Header';
-import Sidebar from '@/components/Sidebar';
+import Sidebar from '@/components/AppSidebar/Sidebar';
 import { Outlet } from 'react-router-dom';
 import WalletHeader from '../Header/WalletHeader';
 
