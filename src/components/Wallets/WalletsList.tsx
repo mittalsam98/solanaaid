@@ -1,6 +1,7 @@
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { getAccountInfo } from '@/lib/apiCalls';
 import { createSolanaWalletFromMnemonic } from '@/lib/utilities';
 import { LAYOUT, useWalletStore } from '@/store/walletStore';
 import { Eye, EyeOff, Trash } from 'lucide-react';
@@ -70,6 +71,12 @@ const WalletDetail = ({ walletIndex }: { walletIndex: number }) => {
     setWalletData(tempWalletData);
   };
 
+  const fetchAccountDetails = async (index: number) => {
+    const key = walletData[index]?.publicKey;
+    const res = await getAccountInfo(key);
+    console.log('Hello details', res);
+  };
+
   return (
     <Card className='w-full flex flex-col items-center'>
       <CardContent className='flex flex-col sm:flex-row w-full p-0'>
@@ -95,17 +102,27 @@ const WalletDetail = ({ walletIndex }: { walletIndex: number }) => {
         <div className='grow'>
           <div className='min-h-12 px-8 py-2 text-xl font-semibold flex justify-between items-center'>
             <span className='truncate'>Wallet {walletIndex + 1}</span>
-            <CustomAlertDialog
-              title='Delete this Wallet?'
-              desc='Are you sure you want to delete this wallet? This action cannot be undone.'
-              cancelBtnText='No'
-              confirmBtnText='Yes'
-              confirmClickHandler={() => deleteWallet(walletIndex)}
-            >
-              <Button variant='ghost' className='flex gap-2 items-center'>
-                <Trash className='size-4 text-destructive' />
-              </Button>
-            </CustomAlertDialog>
+            <div className='flex gap-2'>
+              {/* <Button
+                onClick={() => fetchAccountDetails(walletIndex)}
+                variant='outline'
+                className='flex gap-2 items-center'
+              >
+                <History className='size-4' />
+                Details
+              </Button> */}
+              <CustomAlertDialog
+                title='Delete this Wallet?'
+                desc='Are you sure you want to delete this wallet? This action cannot be undone.'
+                cancelBtnText='No'
+                confirmBtnText='Yes'
+                confirmClickHandler={() => deleteWallet(walletIndex)}
+              >
+                <Button variant='outline' className='flex gap-2 items-center'>
+                  <Trash className='size-4 text-destructive' />
+                </Button>
+              </CustomAlertDialog>
+            </div>
           </div>
           <div className='border-b'></div>
           <div className='py-4 px-8'>

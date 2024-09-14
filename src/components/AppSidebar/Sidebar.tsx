@@ -10,40 +10,55 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { useNavigate } from 'react-router-dom';
 
 export default function Sidebar() {
   const [isSidebarExpanded, setSidebarExpanded] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <aside
-      className={` inset-y-0 left-0 z-10 hidden border-r bg-background sm:flex sm:flex-col sm:items-center sm:justify-between pb-4 ${
-        isSidebarExpanded ? 'w-56' : 'w-14'
+      className={`inset-y-0 left-0 z-10 hidden border-r bg-background sm:flex sm:flex-col sm:items-center sm:justify-between pb-4 ${
+        isSidebarExpanded ? 'w-52' : 'w-14'
       } transition-all duration-300`}
     >
-      <div className='flex flex-col items-center gap-4 px-2 py-4'>
-        <div>
+      <div className='w-full flex flex-col items-center gap-4 '>
+        <div className='border-b w-full px-2 py-2 flex justify-center '>
           <button
             onClick={() => setSidebarExpanded(!isSidebarExpanded)}
             className='flex  items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8'
           >
             {isSidebarExpanded ? (
               <div className='flex gap-2'>
-                <PanelLeft className='h-5 w-5' />
+                <PanelLeft className='h-6 w-6 text-black' />
               </div>
             ) : (
-              <PanelRight className='h-5 w-5' />
+              <PanelRight className='h-6 w-6 text-black' />
             )}
             <span className='sr-only'>Toggle Sidebar</span>
           </button>
         </div>
-        <div className='flex flex-col gap-4 items-start'>
+        <div className='flex flex-col gap-5 items-start py-4'>
           {SIDE_NAV_ITEMS.map((val) => {
             const IconComponent = val.icon;
             return (
-              <Link key={val.path} to={val.path} className='flex items-center gap-3  text-lg '>
-                <IconComponent className='h-5 w-5' />
-                {isSidebarExpanded && <span className='transition-all'>{val.value}</span>}
-              </Link>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <div
+                      onClick={() => navigate(`/${val.path}`)} // Navigate to the absolute path
+                      className='flex items-center gap-3  text-lg '
+                    >
+                      <IconComponent className='h-6 w-6 text-black' />
+                      {isSidebarExpanded && (
+                        <span className='text-sm transition-all'>{val.value}</span>
+                      )}
+                    </div>{' '}
+                  </TooltipTrigger>
+                  <TooltipContent>{val.value}</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             );
           })}
         </div>

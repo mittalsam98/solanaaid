@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 
 export default function Header() {
   return (
-    <header className='sticky top-0 z-30 flex items-center justify-between gap-4 border-b-2 px-6 py-2'>
+    <header className='sticky top-0 z-30 flex items-center justify-between gap-4 px-6 py-2'>
       <Sheet>
         <SheetTrigger asChild>
           <Button size='icon' variant='outline' className='sm:hidden'>
@@ -33,10 +33,10 @@ export default function Header() {
           </nav>
         </SheetContent>
       </Sheet>
-      Web3 Tools
-      <div className='flex gap-4'>
+      {/* Web3 Tools */}
+      {/* <div className='flex gap-4'>
         <WalletMultiButton className='btn btn-ghost mr-4' />
-      </div>
+      </div> */}
     </header>
   );
 }
