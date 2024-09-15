@@ -7,20 +7,20 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table';
-import { getAccountInfo } from '@/lib/apiCalls';
+import solanaRpcCall from '@/lib/api-calls/solana-rpc-call';
+import { ConfirmedSignatureInfo } from '@solana/web3.js';
+import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
 export default function Transaction({ input }: { input: string }) {
-  // useEffect(() => {
-  //   if (input) {
-  //     fetchAccountInfo();
-  //   }
-  // }, [input]);
+  const mutation: UseMutationResult<Array<ConfirmedSignatureInfo>, Error, string> = useMutation({
+    mutationFn: (input: string) => solanaRpcCall.getSignaturesForAddress(input, 'devnet')
+  });
 
-  // const fetchAccountInfo = async () => {
-  //   const response = await getAccountInfo(input);
-  //   console.log(response);
-  // };
+  useEffect(() => {
+    if (input) mutation.mutate(input);
+  }, [input]);
+
   return (
     <Card className='w-full'>
       <CardHeader className='px-7'>

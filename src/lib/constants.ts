@@ -23,5 +23,4 @@ export const SIDE_NAV_ITEMS = [
   }
 ];
 
-export const CONNECTION_URL =
-  'https://solana-devnet.g.alchemy.com/v2/-RE2vDx1oFcNjFO7_KKGdmjVkYiaXpHC';
+export const LIVE_COIN_WATCH_CONNECTION_URL = 'https://api.livecoinwatch.com/coins/single';

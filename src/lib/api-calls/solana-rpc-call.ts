@@ -1,0 +1,70 @@
+import {
+  clusterApiUrl,
+  Connection,
+  PublicKey,
+  LAMPORTS_PER_SOL,
+  AccountInfo,
+  Cluster,
+  Commitment,
+  RpcResponseAndContext,
+  ParsedAccountData,
+  ConfirmedSignatureInfo
+} from '@solana/web3.js';
+
+class SolanaService {
+  private static connection: Connection | null = null;
+
+  // Private method to initialize the connection only once
+  private static getConnection(
+    clusterUrl: Cluster = 'devnet',
+    commitment: Commitment = 'confirmed'
+  ): Connection {
+    if (!this.connection) {
+      this.connection = new Connection(clusterApiUrl(clusterUrl), commitment);
+    }
+    return this.connection;
+  }
+
+  // Fetch account information for a given public key
+  async getAccountInfo(
+    publicKey: string,
+    clusterUrl: Cluster = 'devnet'
+  ): Promise<RpcResponseAndContext<AccountInfo<Buffer | ParsedAccountData> | null>> {
+    try {
+      const connection = SolanaService.getConnection(clusterUrl);
+      const wallet = new PublicKey(publicKey);
+      return await connection.getParsedAccountInfo(wallet);
+    } catch (error) {
+      console.error('Error fetching account info:', error);
+      throw error;
+    }
+  }
+  async getSignaturesForAddress(
+    publicKey: string,
+    clusterUrl: Cluster = 'devnet'
+  ): Promise<Array<ConfirmedSignatureInfo>> {
+    try {
+      const connection = SolanaService.getConnection(clusterUrl);
+      const wallet = new PublicKey(publicKey);
+      return await connection.getSignaturesForAddress(wallet);
+    } catch (error) {
+      console.error('Error fetching account info:', error);
+      throw error;
+    }
+  }
+
+  // Fetch balance for a given public key
+  async getBalance(publicKey: string, clusterUrl: Cluster = 'devnet'): Promise<number | null> {
+    try {
+      const connection = SolanaService.getConnection(clusterUrl);
+      const wallet = new PublicKey(publicKey);
+      const balance = await connection.getBalance(wallet);
+      return balance / LAMPORTS_PER_SOL; // Convert lamports to SOL
+    } catch (error) {
+      console.error('Error fetching balance:', error);
+      return null;
+    }
+  }
+}
+
+export default new SolanaService(); // Export a single instance of the service

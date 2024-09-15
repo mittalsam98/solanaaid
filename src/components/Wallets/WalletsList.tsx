@@ -1,7 +1,6 @@
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { getAccountInfo } from '@/lib/apiCalls';
 import { createSolanaWalletFromMnemonic } from '@/lib/utilities';
 import { LAYOUT, useWalletStore } from '@/store/walletStore';
 import { Eye, EyeOff, Trash } from 'lucide-react';
@@ -69,12 +68,6 @@ const WalletDetail = ({ walletIndex }: { walletIndex: number }) => {
     const tempWalletData = [...walletData];
     tempWalletData.splice(index, 1);
     setWalletData(tempWalletData);
-  };
-
-  const fetchAccountDetails = async (index: number) => {
-    const key = walletData[index]?.publicKey;
-    const res = await getAccountInfo(key);
-    console.log('Hello details', res);
   };
 
   return (
