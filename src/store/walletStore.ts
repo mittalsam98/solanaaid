@@ -22,8 +22,8 @@ interface WalletState {
   privateKeyVisible: boolean;
 }
 const getLocalStorageData = () => {
-  const storageData = (secureLocalStorage.getItem('walletData') as string) ?? '';
-  const parsedStorageData = JSON.parse(storageData);
+  const storageData = (secureLocalStorage.getItem('walletData') as string) ?? {};
+  const parsedStorageData = JSON.parse(JSON.stringify(storageData));
   if (parsedStorageData) {
     return parsedStorageData;
   } else return [];
