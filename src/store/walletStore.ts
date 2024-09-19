@@ -21,12 +21,22 @@ interface WalletState {
   privateKey: string;
   privateKeyVisible: boolean;
 }
+
 const getLocalStorageData = () => {
-  const storageData = (secureLocalStorage.getItem('walletData') as string) ?? {};
-  const parsedStorageData = JSON.parse(storageData);
-  if (parsedStorageData) {
-    return parsedStorageData;
-  } else return [];
+  const storageData = secureLocalStorage.getItem('walletData') as string;
+
+  try {
+    if (storageData) {
+      const parsedStorageData = JSON.parse(storageData);
+      if (Array.isArray(parsedStorageData)) {
+        return parsedStorageData;
+      }
+    }
+  } catch (error) {
+    console.error('Error parsing walletData from localStorage:', error);
+  }
+
+  return [];
 };
 
 export const useWalletStore = create<WalletsState>()((set) => ({
@@ -39,6 +49,6 @@ export const useWalletStore = create<WalletsState>()((set) => ({
     secureLocalStorage.setItem('walletData', JSON.stringify(data));
     return set({ walletData: data });
   },
-  setLayout: (layout: LAYOUT) => set({ layout: layout }),
+  setLayout: (layout: LAYOUT) => set({ layout }),
   setActiveWalletIndex: (val: number) => set(() => ({ activeWalletIndex: val }))
 }));
