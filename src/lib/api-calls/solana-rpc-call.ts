@@ -1,14 +1,16 @@
 import {
-  clusterApiUrl,
-  Connection,
-  PublicKey,
-  LAMPORTS_PER_SOL,
   AccountInfo,
   Cluster,
+  clusterApiUrl,
   Commitment,
-  RpcResponseAndContext,
+  ConfirmedSignatureInfo,
+  Connection,
+  LAMPORTS_PER_SOL,
   ParsedAccountData,
-  ConfirmedSignatureInfo
+  ParsedTransactionWithMeta,
+  PublicKey,
+  RpcResponseAndContext,
+  TransactionSignature
 } from '@solana/web3.js';
 
 class SolanaService {
@@ -41,12 +43,22 @@ class SolanaService {
   }
   async getSignaturesForAddress(
     publicKey: string,
-    clusterUrl: Cluster = 'devnet'
+    limit: number = 25,
+    clusterUrl: Cluster = 'devnet',
+    before?: string
   ): Promise<Array<ConfirmedSignatureInfo>> {
     try {
+      let params = {};
+
+      if (before) {
+        params = { ...params, before: before };
+      }
+      if (limit) {
+        params = { ...params, limit: limit };
+      }
       const connection = SolanaService.getConnection(clusterUrl);
       const wallet = new PublicKey(publicKey);
-      return await connection.getSignaturesForAddress(wallet);
+      return await connection.getSignaturesForAddress(wallet, { ...params });
     } catch (error) {
       console.error('Error fetching account info:', error);
       throw error;
@@ -63,6 +75,22 @@ class SolanaService {
     } catch (error) {
       console.error('Error fetching balance:', error);
       return null;
+    }
+  }
+
+  async getParsedTransaction(
+    signature: TransactionSignature,
+    clusterUrl: Cluster = 'devnet'
+  ): Promise<ParsedTransactionWithMeta | null> {
+    try {
+      const connection = SolanaService.getConnection(clusterUrl);
+      return await connection.getParsedTransaction(signature, {
+        commitment: 'confirmed',
+        maxSupportedTransactionVersion: 0
+      });
+    } catch (error) {
+      console.error('Error fetching account info:', error);
+      throw error;
     }
   }
 }

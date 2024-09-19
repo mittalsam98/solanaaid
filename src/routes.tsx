@@ -5,6 +5,7 @@ import AccountInfo from './pages/AccountInfo';
 import CreateToken from './pages/CreateToken';
 import { Dashboard } from './pages/Dashboard';
 import Wallets from './pages/Wallets';
+import TxnSignature from './pages/TxnSignature';
 
 export default function AppRoutes() {
   return (
@@ -15,6 +16,7 @@ export default function AppRoutes() {
           <Route path='/create-token' element={<CreateToken />} />
           <Route path='/air-drop' element={<Airdrop />} />
           <Route path='/account-info' element={<AccountInfo />} />
+          <Route path='/tx/:signature' element={<TxnSignature />} />
           <Route path='/wallet' element={<Wallets />} />
         </Route>
       </Routes>

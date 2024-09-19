@@ -13,7 +13,7 @@ export default function AccountInfo() {
     setKeyInput(e.target.value);
   };
   return (
-    <div className='flex justify-center p-12 gap-12 flex-wrap'>
+    <div className='flex justify-center p-12 gap-12 w-full'>
       <Card className='w-full items-center pb-3 pt-2 max-h-52 lg:max-w-[540px]'>
         <CardContent className='w-full flex pt-4 flex-col gap-6'>
           <Label htmlFor='publicKey'>Enter the public key</Label>

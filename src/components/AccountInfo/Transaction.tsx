@@ -7,113 +7,126 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import solanaRpcCall from '@/lib/api-calls/solana-rpc-call';
 import { ConfirmedSignatureInfo } from '@solana/web3.js';
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { formatRelative } from 'date-fns';
+import { Copy } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+import { Button } from '../ui/button';
 
 export default function Transaction({ input }: { input: string }) {
-  const mutation: UseMutationResult<Array<ConfirmedSignatureInfo>, Error, string> = useMutation({
-    mutationFn: (input: string) => solanaRpcCall.getSignaturesForAddress(input, 'devnet')
+  const [txn, setTxns] = useState<ConfirmedSignatureInfo[]>([]);
+  const [lastFetchedTxn, setLastFetchedTxn] = useState<string>('');
+
+  const mutation: UseMutationResult<
+    Array<ConfirmedSignatureInfo>,
+    Error,
+    { input: string; before?: string }
+  > = useMutation({
+    mutationFn: ({ input, before }) =>
+      solanaRpcCall.getSignaturesForAddress(input, 10, 'devnet', before),
+    onSuccess: (res) => {
+      console.log(res);
+      const lastTxn = res[res.length - 1].signature;
+      setLastFetchedTxn(lastTxn);
+      setTxns((tsx) => [...tsx, ...res]);
+    }
   });
 
   useEffect(() => {
-    if (input) mutation.mutate(input);
+    if (input) mutation.mutate({ input });
   }, [input]);
+
+  const loadMoreClickHandler = () => {
+    console.log('dd');
+    mutation.mutate({ input, before: lastFetchedTxn });
+  };
 
   return (
     <Card className='w-full'>
       <CardHeader className='px-7'>
         <CardTitle>Transaction</CardTitle>
-        <CardDescription>Transaction History of the account </CardDescription>
+        <CardDescription>Transaction History of the account</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className='flex flex-col justify-center items-center'>
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Transaction Signature</TableHead>
+              <TableHead className=''>Block</TableHead>
               <TableHead className='hidden sm:table-cell'>Timestamp</TableHead>
-              <TableHead className='hidden sm:table-cell'>Status</TableHead>
-              <TableHead className='hidden md:table-cell'>Date</TableHead>
-              <TableHead className='text-right'>Amount</TableHead>
+              <TableHead className='hidden text-right sm:table-cell'>Status</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow className='bg-accent'>
-              <TableCell>
-                <div className='font-medium'>Liam Johnson</div>
-                <div className='hidden text-sm text-muted-foreground md:inline'>
-                  liam@example.com
-                </div>
-              </TableCell>
-              <TableCell className='hidden sm:table-cell'>Sale</TableCell>
-              <TableCell className='hidden sm:table-cell'>Fulfilled</TableCell>
-              <TableCell className='hidden md:table-cell'>2023-06-23</TableCell>
-              <TableCell className='text-right'>$250.00</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                <div className='font-medium'>Olivia Smith</div>
-                <div className='hidden text-sm text-muted-foreground md:inline'>
-                  olivia@example.com
-                </div>
-              </TableCell>
-              <TableCell className='hidden sm:table-cell'>Refund</TableCell>
-              <TableCell className='hidden sm:table-cell'>Declined</TableCell>
-              <TableCell className='hidden md:table-cell'>2023-06-24</TableCell>
-              <TableCell className='text-right'>$150.00</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                <div className='font-medium'>Noah Williams</div>
-                <div className='hidden text-sm text-muted-foreground md:inline'>
-                  noah@example.com
-                </div>
-              </TableCell>
-              <TableCell className='hidden sm:table-cell'>Subscription</TableCell>
-              <TableCell className='hidden sm:table-cell'>Fulfilled</TableCell>
-              <TableCell className='hidden md:table-cell'>2023-06-25</TableCell>
-              <TableCell className='text-right'>$350.00</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                <div className='font-medium'>Emma Brown</div>
-                <div className='hidden text-sm text-muted-foreground md:inline'>
-                  emma@example.com
-                </div>
-              </TableCell>
-              <TableCell className='hidden sm:table-cell'>Sale</TableCell>
-              <TableCell className='hidden sm:table-cell'>Fulfilled</TableCell>
-              <TableCell className='hidden md:table-cell'>2023-06-26</TableCell>
-              <TableCell className='text-right'>$450.00</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                <div className='font-medium'>Liam Johnson</div>
-                <div className='hidden text-sm text-muted-foreground md:inline'>
-                  liam@example.com
-                </div>
-              </TableCell>
-              <TableCell className='hidden sm:table-cell'>Sale</TableCell>
-              <TableCell className='hidden sm:table-cell'>Fulfilled</TableCell>
-              <TableCell className='hidden md:table-cell'>2023-06-23</TableCell>
-              <TableCell className='text-right'>$250.00</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                <div className='font-medium'>Liam Johnson</div>
-                <div className='hidden text-sm text-muted-foreground md:inline'>
-                  liam@example.com
-                </div>
-              </TableCell>
-              <TableCell className='hidden sm:table-cell'>Sale</TableCell>
-              <TableCell className='hidden sm:table-cell'>Fulfilled</TableCell>
-              <TableCell className='hidden md:table-cell'>2023-06-23</TableCell>
-              <TableCell className='text-right'>$250.00</TableCell>
-            </TableRow>
+            {txn?.map((datum) => (
+              <TableRowComp key={datum.signature} datum={datum} />
+            ))}
           </TableBody>
         </Table>
+        <Button onClick={loadMoreClickHandler} className='mt-12 w-2/4'>
+          Load more
+        </Button>
       </CardContent>
     </Card>
   );
 }
+const handleCopy = (text: string) => {
+  try {
+    navigator.clipboard.writeText(text);
+    toast('Copied signature hash phrase to clipboard!');
+  } catch (error) {
+    toast('Uh oh! Something went wrong.');
+  }
+};
+// Updated TableRowComp to use forwardRef properly
+const TableRowComp = ({ datum }: { datum: ConfirmedSignatureInfo }) => {
+  const navigate = useNavigate();
+
+  return (
+    <>
+      <TableRow>
+        <TableCell>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <div className='flex items-center gap-3 '>
+                  <Copy onClick={() => handleCopy(datum.signature)} className='h-4 w-4' />
+                  <Link to={`/tx/${datum.signature}`}>
+                    <div className='font-medium text-ellipsis overflow-hidden w-80'>
+                      {datum.signature}
+                    </div>
+                  </Link>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent className='text-xl'>{datum.signature}</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </TableCell>
+        <TableCell>
+          <div className='font-medium'>{datum?.slot?.toLocaleString()}</div>
+        </TableCell>
+        <TableCell className='hidden sm:table-cell'>
+          {datum?.blockTime ? formatRelative(datum.blockTime * 1000, new Date()) : 'N/A'}
+        </TableCell>
+        <TableCell className='hidden sm:table-cell text-right'>
+          {datum?.err === null ? (
+            <span className='bg-[#1690311A] text-[#169031] font-semibold px-2 py-1 rounded-full'>
+              <small>Confirmed</small>
+            </span>
+          ) : (
+            <span className='bg-[#F21F111A] font-semibold text-[#F21F11] px-2 py-1 rounded-full'>
+              <small>Error</small>
+            </span>
+          )}
+        </TableCell>
+      </TableRow>
+    </>
+  );
+};
+
+TableRowComp.displayName = 'TableRowComp';

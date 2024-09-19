@@ -7,7 +7,7 @@ export default function MainAppLayout() {
     <div className='flex min-h-screen w-full  bg-muted/40'>
       <Sidebar />
 
-      <div className='flex flex-col sm:gap-4 w-full'>
+      <div className='flex flex-col  items-center sm:gap-4 w-full'>
         <Header />
         <Outlet />
       </div>

@@ -23,7 +23,7 @@ interface WalletState {
 }
 const getLocalStorageData = () => {
   const storageData = (secureLocalStorage.getItem('walletData') as string) ?? {};
-  const parsedStorageData = JSON.parse(JSON.stringify(storageData));
+  const parsedStorageData = JSON.parse(storageData);
   if (parsedStorageData) {
     return parsedStorageData;
   } else return [];
