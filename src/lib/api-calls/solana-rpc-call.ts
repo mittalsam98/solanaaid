@@ -93,6 +93,20 @@ class SolanaService {
       throw error;
     }
   }
+  async requestAirDrop(
+    publicKey: string,
+    lamports: number,
+    clusterUrl: Cluster = 'devnet'
+  ): Promise<TransactionSignature | null> {
+    const publicK = new PublicKey(publicKey);
+    try {
+      const connection = SolanaService.getConnection(clusterUrl);
+      return await connection.requestAirdrop(publicK, lamports);
+    } catch (error) {
+      console.error('Error fetching account info:', error);
+      throw error;
+    }
+  }
 }
 
 export default new SolanaService(); // Export a single instance of the service
