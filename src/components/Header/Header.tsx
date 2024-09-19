@@ -3,7 +3,6 @@ import { BadgePlus, PanelLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { SIDE_NAV_ITEMS } from '@/lib/constants';
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { Link } from 'react-router-dom';
 
 export default function Header() {

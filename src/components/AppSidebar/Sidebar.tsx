@@ -1,7 +1,3 @@
-import { PanelLeft, PanelRight } from 'lucide-react';
-import { SIDE_NAV_ITEMS } from '@/lib/constants';
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -11,6 +7,9 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { SIDE_NAV_ITEMS } from '@/lib/constants';
+import { PanelLeft, PanelRight } from 'lucide-react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function Sidebar() {

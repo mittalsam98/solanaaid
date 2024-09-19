@@ -14,7 +14,7 @@ import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import { formatRelative } from 'date-fns';
 import { Copy } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Button } from '../ui/button';
 
@@ -85,8 +85,6 @@ const handleCopy = (text: string) => {
 };
 // Updated TableRowComp to use forwardRef properly
 const TableRowComp = ({ datum }: { datum: ConfirmedSignatureInfo }) => {
-  const navigate = useNavigate();
-
   return (
     <>
       <TableRow>
