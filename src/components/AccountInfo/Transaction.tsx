@@ -12,13 +12,20 @@ import solanaRpcCall from '@/lib/api-calls/solana-rpc-call';
 import { ConfirmedSignatureInfo } from '@solana/web3.js';
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import { formatRelative } from 'date-fns';
-import { Copy } from 'lucide-react';
+import { Copy, Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Button } from '../ui/button';
+import { Skeleton } from '../ui/skeleton';
 
-export default function Transaction({ input }: { input: string }) {
+export default function Transaction({
+  input,
+  setLoading
+}: {
+  input: string;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   const [txn, setTxns] = useState<ConfirmedSignatureInfo[]>([]);
   const [lastFetchedTxn, setLastFetchedTxn] = useState<string>('');
 
@@ -30,19 +37,25 @@ export default function Transaction({ input }: { input: string }) {
     mutationFn: ({ input, before }) =>
       solanaRpcCall.getSignaturesForAddress(input, 10, 'devnet', before),
     onSuccess: (res) => {
-      console.log(res);
-      const lastTxn = res[res.length - 1].signature;
+      const lastTxn = res[res.length - 1]?.signature;
       setLastFetchedTxn(lastTxn);
       setTxns((tsx) => [...tsx, ...res]);
+    },
+    onError: (err) => {
+      toast.error(err.message ?? 'Something went wrong');
     }
   });
 
   useEffect(() => {
+    setLoading(mutation.isPending);
+  }, [mutation.isPending]);
+
+  useEffect(() => {
+    setTxns([]);
     if (input) mutation.mutate({ input });
   }, [input]);
 
   const loadMoreClickHandler = () => {
-    console.log('dd');
     mutation.mutate({ input, before: lastFetchedTxn });
   };
 
@@ -62,6 +75,28 @@ export default function Transaction({ input }: { input: string }) {
               <TableHead className='hidden text-right sm:table-cell'>Status</TableHead>
             </TableRow>
           </TableHeader>
+          {mutation.isPending && (
+            <TableBody>
+              {Array(3)
+                .fill('')
+                .map((_) => (
+                  <TableRow>
+                    <TableCell>
+                      <Skeleton className='w-full h-[30px] my-2' />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className='w-full h-[30px] my-2' />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className='w-full h-[30px] my-2' />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className='w-full h-[30px] my-2' />
+                    </TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          )}
           <TableBody>
             {txn?.map((datum) => (
               <TableRowComp key={datum.signature} datum={datum} />
@@ -69,7 +104,8 @@ export default function Transaction({ input }: { input: string }) {
           </TableBody>
         </Table>
         <Button onClick={loadMoreClickHandler} className='mt-12 w-2/4'>
-          Load more
+          {mutation.isPending && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
+          {mutation.isPending ? 'Loading' : 'Load more'}
         </Button>
       </CardContent>
     </Card>

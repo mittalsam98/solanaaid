@@ -13,7 +13,16 @@ createRoot(document.getElementById('root')!).render(
     <WalletContextProvider>
       <TooltipProvider>
         <AppRoutes />
-        <Toaster />
+        <Toaster
+          toastOptions={{
+            classNames: {
+              error: 'bg-red-400',
+              success: 'text-green-400',
+              warning: 'text-yellow-400',
+              info: 'bg-blue-400'
+            }
+          }}
+        />{' '}
       </TooltipProvider>
     </WalletContextProvider>
   </QueryClientProvider>

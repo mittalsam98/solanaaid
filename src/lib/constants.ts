@@ -12,7 +12,7 @@ export const SIDE_NAV_ITEMS = [
     icon: WalletCards
   },
   {
-    value: 'Air Drop',
+    value: 'Request Airdrop',
     path: 'air-drop',
     icon: Droplets
   },

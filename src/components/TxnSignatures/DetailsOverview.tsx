@@ -1,29 +1,17 @@
 import { SolBalance } from '@/components/CommonComponents/SolBalance';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
-import solanaRpcCall from '@/lib/api-calls/solana-rpc-call';
 import { ParsedTransactionWithMeta } from '@solana/web3.js';
-import { useMutation, UseMutationResult } from '@tanstack/react-query';
+import { UseMutationResult } from '@tanstack/react-query';
 import { format } from 'date-fns';
-import { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 
-export default function DetailsOverview() {
-  const { signature } = useParams();
-  const mutation: UseMutationResult<ParsedTransactionWithMeta | null, Error, unknown> = useMutation(
-    {
-      mutationFn: () => solanaRpcCall.getParsedTransaction(signature ?? '', 'devnet')
-    }
-  );
-
-  useEffect(() => {
-    if (signature) mutation.mutate(signature);
-  }, [signature]);
-
-  {
-    console.log(mutation);
-  }
-
+export default function DetailsOverview({
+  signature,
+  mutation
+}: {
+  signature: string;
+  mutation: UseMutationResult<ParsedTransactionWithMeta | null, Error, unknown>;
+}) {
   const fee = mutation?.data?.meta?.fee;
   const computeUnitsConsumed = mutation?.data?.meta?.computeUnitsConsumed;
   const transaction = mutation?.data?.transaction;

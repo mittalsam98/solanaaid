@@ -21,8 +21,15 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 
-export default function Overview({ input }: { input: string }) {
+export default function Overview({
+  input,
+  setLoading
+}: {
+  input: string;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   const [currency, setCurrency] = useState('USD');
 
   const mutation: UseMutationResult<
@@ -30,7 +37,10 @@ export default function Overview({ input }: { input: string }) {
     Error,
     string
   > = useMutation({
-    mutationFn: (input: string) => solanaRpcCall.getAccountInfo(input, 'devnet')
+    mutationFn: (input: string) => solanaRpcCall.getAccountInfo(input, 'devnet'),
+    onError: (err) => {
+      toast.error(err.message ?? 'Something went wrong');
+    }
   });
 
   const getSolanaPriceMutation: UseMutationResult<SolanaPriceResponse, Error, string> = useMutation(
@@ -38,6 +48,10 @@ export default function Overview({ input }: { input: string }) {
       mutationFn: (currency) => getSolanaPrice(currency)
     }
   );
+
+  useEffect(() => {
+    setLoading(mutation.isPending || getSolanaPriceMutation.isPending);
+  }, [mutation.isPending, getSolanaPriceMutation.isPending]);
 
   useEffect(() => {
     if (input) mutation.mutate(input);
@@ -78,7 +92,6 @@ export default function Overview({ input }: { input: string }) {
   return (
     <div className='w-full'>
       <div className='flex justify-center gap-5'>
-        {/* Balance Card */}
         <Card className='mb-3 w-56'>
           <CardHeader className='pb-4'>
             <div className='flex items-center gap-3 justify-center'>
@@ -97,7 +110,6 @@ export default function Overview({ input }: { input: string }) {
           </CardContent>
         </Card>
 
-        {/* Worth Card */}
         <Card className='mb-3 w-56'>
           <CardHeader className='pb-4'>
             <div className='flex items-center gap-3 justify-center'>
@@ -144,7 +156,7 @@ export default function Overview({ input }: { input: string }) {
               <TableRow>
                 <TableCell className='table-cell'>Allocated Data Size </TableCell>
                 {/* @ts-ignore */}
-                <TableCell className='text-right'>{mutation?.data?.value.space ?? '-'}</TableCell>
+                <TableCell className='text-right'>{mutation?.data?.value?.space ?? '-'}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className='table-cell'>Executable</TableCell>
